@@ -25,6 +25,10 @@ const removeError = function () {
 	errorMsg.classList.add("hidden");
 };
 
+// PUT HTTPS AT FRONT OF URL IN CASE USER ENTERS URL MANUALLY
+const fixUrl = (url) =>
+	url.slice(0, 8) !== "https://" ? `https://${url}` : url;
+
 const copyText = function () {
 	// get shortened link
 	const shortLink = document.querySelector(".shortened-link");
@@ -41,17 +45,22 @@ const copyText = function () {
 // URL SHORTENER
 const formSubmit = async (e) => {
 	e.preventDefault();
-	let originalLink = "";
 
+	let visibleOriginalLink = fixUrl(urlInput.value);
+	//add https:// if missing
+	const originalLink = fixUrl(urlInput.value);
+
+	// shorten original url if too long
 	if (urlInput.value.length > 31) {
-		originalLink = `${urlInput.value.substring(0, 30)}...`;
+		visibleOriginalLink = `${originalLink.substring(0, 30)}...`;
 	} else {
-		originalLink = urlInput.value;
+		visibleOriginalLink = originalLink;
 	}
 	// add error if no text was entered, remove error if text is entered afterwards
 	if (urlInput.value != "") removeError();
 	if (urlInput.value === "") return displayError();
-
+	console.log(visibleOriginalLink);
+	console.log(originalLink);
 	try {
 		// code from bitly api docs to shorten the original link
 		const response = await fetch(apiUrl, {
@@ -71,7 +80,7 @@ const formSubmit = async (e) => {
 		// create new list element and prepend it to the list to display shortened links
 		let shortenedUrlContainer = document.createElement("li");
 		shortenedUrlContainer.className = "shortened-url-container";
-		shortenedUrlContainer.innerHTML = `<span class="original-link">${originalLink}</span>
+		shortenedUrlContainer.innerHTML = `<span class="original-link">${visibleOriginalLink}</span>
 
   <div class="shortened-link-container">
     <a href="${data.link}" target="_blank" class="shortened-link">${data.link}</a
