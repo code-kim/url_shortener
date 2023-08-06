@@ -39,7 +39,7 @@ const copyText = function () {
 };
 
 // URL SHORTENER
-form.addEventListener("click", async (e) => {
+const formSubmit = async (e) => {
 	e.preventDefault();
 	let originalLink = "";
 
@@ -83,7 +83,9 @@ form.addEventListener("click", async (e) => {
 	}
 	// set value back to empty after original link was submitted
 	urlInput.value = "";
-});
+};
+
+form.addEventListener("submit", formSubmit);
 
 // COPY SHORTENED URL
 document.addEventListener("click", function (e) {
@@ -91,7 +93,7 @@ document.addEventListener("click", function (e) {
 });
 
 //HAMBURGER MENU
-document.addEventListener("click", function (e) {
+hamBurger.addEventListener("click", function (e) {
 	e.preventDefault();
 	if (menu.style.display === "flex") {
 		menu.style.display = "";
