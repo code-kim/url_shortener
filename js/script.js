@@ -6,11 +6,17 @@ const urlShortenBtn = document.querySelector(".url-shorten-btn");
 const shortenedUrlsContainer = document.querySelector(
 	".shortened-urls-container"
 );
+
 const errorMsg = document.querySelector(".error-msg");
 const accessToken = "9bb7b5d4b8a1dd5c492df88dd390436060dfc3a4";
 const apiUrl = "https://api-ssl.bitly.com/v4/shorten";
 const hamBurger = document.querySelector(".hamburger");
 const menu = document.querySelector(".nav-links-buttons-container");
+
+let shortenedUrlsArray = [];
+let visibleOriginalLink;
+let originalLink;
+let data;
 
 // HELPER FUNCTIONS
 const displayError = function () {
@@ -42,25 +48,64 @@ const copyText = function () {
 	});
 };
 
+//CREATE OBJECT WITH FORM DATA FOR LOCAL STORAGE
+const createObject = (data) => {
+	return {
+		visibleOriginalLink: visibleOriginalLink,
+		shortenedLink: data.link,
+	};
+};
+
+// SET LOCAL STORAGE
+
+const setLocalStorage = (links) => {
+	localStorage.setItem("links", JSON.stringify(links));
+};
+
+//GET LOCAL STORAGE
+const getLocalStorage = () => {
+	const localData = JSON.parse(localStorage.getItem("links"));
+
+	if (!localData) return;
+
+	shortenedUrlsArray = localData;
+	//console.log(shortenedUrlsArray);
+	shortenedUrlsArray.forEach((url) => {
+		//console.log(url);
+		renderUrlContainer(url.shortenedLink, url.visibleOriginalLink);
+		//console.log(url.shortenedLink, url.visibleOriginalLink);
+	});
+};
+
+// create new list element and prepend it to the list to display shortened links
+const renderUrlContainer = (shortLink, longLink) => {
+	let shortenedUrlContainer = document.createElement("li");
+	shortenedUrlContainer.className = "shortened-url-container";
+	shortenedUrlContainer.innerHTML = `<span class="original-link">${longLink}</span>
+
+<div class="shortened-link-container">
+<a href="${shortLink}" target="_blank" class="shortened-link">${shortLink}</a
+><button class="btn copy">copy</button>
+</div>`;
+	shortenedUrlsContainer.prepend(shortenedUrlContainer);
+	//console.log(shortenedUrlContainer);
+};
+
 // URL SHORTENER
 const formSubmit = async (e) => {
 	e.preventDefault();
-
-	let visibleOriginalLink = fixUrl(urlInput.value);
+	// add error if no text was entered, remove error if text is entered afterwards
+	if (urlInput.value != "") removeError();
+	if (urlInput.value === "") return displayError();
 	//add https:// if missing
-	const originalLink = fixUrl(urlInput.value);
-
+	originalLink = fixUrl(urlInput.value);
+	visibleOriginalLink = fixUrl(urlInput.value);
 	// shorten original url if too long
 	if (urlInput.value.length > 31) {
 		visibleOriginalLink = `${originalLink.substring(0, 30)}...`;
 	} else {
 		visibleOriginalLink = originalLink;
 	}
-	// add error if no text was entered, remove error if text is entered afterwards
-	if (urlInput.value != "") removeError();
-	if (urlInput.value === "") return displayError();
-	console.log(visibleOriginalLink);
-	console.log(originalLink);
 	try {
 		// code from bitly api docs to shorten the original link
 		const response = await fetch(apiUrl, {
@@ -75,18 +120,18 @@ const formSubmit = async (e) => {
 			}),
 		});
 		// get the data from the response
-		const data = await response.json();
+		data = await response.json();
 
-		// create new list element and prepend it to the list to display shortened links
-		let shortenedUrlContainer = document.createElement("li");
-		shortenedUrlContainer.className = "shortened-url-container";
-		shortenedUrlContainer.innerHTML = `<span class="original-link">${visibleOriginalLink}</span>
+		//render urlContainer
+		renderUrlContainer(data.link, visibleOriginalLink);
 
-  <div class="shortened-link-container">
-    <a href="${data.link}" target="_blank" class="shortened-link">${data.link}</a
-    ><button class="btn copy">copy</button>
-  </div>`;
-		shortenedUrlsContainer.prepend(shortenedUrlContainer);
+		//create data object
+		let obj = createObject(data);
+		//console.log(obj);
+		//add to array
+		shortenedUrlsArray.push(obj);
+		setLocalStorage(shortenedUrlsArray);
+		//console.log(shortenedUrlsArray);
 	} catch (err) {
 		console.error(err);
 	}
@@ -95,6 +140,12 @@ const formSubmit = async (e) => {
 };
 
 form.addEventListener("submit", formSubmit);
+
+//set local storage
+//setLocalStorage(shortenedUrlsArray);
+
+//call get local storage
+getLocalStorage(data);
 
 // COPY SHORTENED URL
 document.addEventListener("click", function (e) {

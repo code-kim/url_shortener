@@ -185,7 +185,7 @@
 		width: 93vw;
 		font-size: 2.4rem;
 		padding: 0 2rem 1rem;
-		border-bottom: 1px solid rgb(163, 163, 163);
+		border-bottom: 2px solid hsl(225, 33%, 95%);
 	}
 
 	.shortened-link {
