@@ -6,17 +6,22 @@ const urlShortenBtn = document.querySelector(".url-shorten-btn");
 const shortenedUrlsContainer = document.querySelector(
 	".shortened-urls-container"
 );
-
 const errorMsg = document.querySelector(".error-msg");
 const accessToken = "9bb7b5d4b8a1dd5c492df88dd390436060dfc3a4";
 const apiUrl = "https://api-ssl.bitly.com/v4/shorten";
 const hamBurger = document.querySelector(".hamburger");
 const menu = document.querySelector(".nav-links-buttons-container");
+const clearBtn = document.querySelector(".clear-btn");
+const statisticsTitle = document.querySelector(".statistics-title");
 
+const ids = [];
 let shortenedUrlsArray = [];
 let visibleOriginalLink;
 let originalLink;
 let data;
+let localData;
+let shortenedUrlContainer;
+//let closeUrlContainer;
 
 // HELPER FUNCTIONS
 const displayError = function () {
@@ -31,9 +36,12 @@ const removeError = function () {
 	errorMsg.classList.add("hidden");
 };
 
-// PUT HTTPS AT FRONT OF URL IN CASE USER ENTERS URL MANUALLY
-const fixUrl = (url) =>
-	url.slice(0, 8) !== "https://" ? `https://${url}` : url;
+// PUT HTTPS AT FRONT OF URL IN CASE USER ENTERS URL MANUALLY & GET RID OF ANY
+// SPACES
+const fixUrl = (url) => {
+	let noSpaces = url.replaceAll(/\s/g, "");
+	return noSpaces.slice(0, 8) !== "https://" ? `https://${noSpaces}` : noSpaces;
+};
 
 const copyText = function () {
 	// get shortened link
@@ -53,7 +61,19 @@ const createObject = (data) => {
 	return {
 		visibleOriginalLink: visibleOriginalLink,
 		shortenedLink: data.link,
+		id: shortenedUrlContainer.dataset.id,
 	};
+};
+
+//SET DATA-ID FOR EACH URL CONTAINER IN LIST
+
+const setId = (urlContainer) => {
+	let randomNum = Math.floor(Math.random() * 100);
+	if (!ids.includes(randomNum)) {
+		urlContainer.setAttribute("data-id", randomNum);
+	}
+
+	ids.push(+urlContainer.dataset.id);
 };
 
 // SET LOCAL STORAGE
@@ -64,7 +84,7 @@ const setLocalStorage = (links) => {
 
 //GET LOCAL STORAGE
 const getLocalStorage = () => {
-	const localData = JSON.parse(localStorage.getItem("links"));
+	localData = JSON.parse(localStorage.getItem("links"));
 
 	if (!localData) return;
 
@@ -77,18 +97,38 @@ const getLocalStorage = () => {
 	});
 };
 
+const clearData = () => {
+	// clear storage
+	localStorage.clear();
+	//clear urls array
+	shortenedUrlsArray = [];
+	// clear rendered list elements and hide clear btn
+	shortenedUrlsContainer.innerHTML = "";
+	clearBtn.classList.add("hidden");
+	// add top padding back to 15rem on statistics title
+	statisticsTitle.style.paddingTop = "15rem";
+};
+
 // create new list element and prepend it to the list to display shortened links
 const renderUrlContainer = (shortLink, longLink) => {
-	let shortenedUrlContainer = document.createElement("li");
+	// show clear button
+	clearBtn.classList.remove("hidden");
+	// reduce padding on statistics-title
+	statisticsTitle.style.paddingTop = "10rem";
+
+	shortenedUrlContainer = document.createElement("li");
 	shortenedUrlContainer.className = "shortened-url-container";
-	shortenedUrlContainer.innerHTML = `<span class="original-link">${longLink}</span>
+
+	shortenedUrlContainer.innerHTML = `<p class="original-link">${longLink}</p>
 
 <div class="shortened-link-container">
 <a href="${shortLink}" target="_blank" class="shortened-link">${shortLink}</a
 ><button class="btn copy">copy</button>
-</div>`;
+
+</div>
+<ion-icon name="close-outline" class="close-shortened-url"></ion-icon>`;
 	shortenedUrlsContainer.prepend(shortenedUrlContainer);
-	//console.log(shortenedUrlContainer);
+	setId(shortenedUrlContainer);
 };
 
 // URL SHORTENER
@@ -121,16 +161,18 @@ const formSubmit = async (e) => {
 		});
 		// get the data from the response
 		data = await response.json();
+		//check to see if there is already the same url
+		if (shortenedUrlsArray.every((obj, i) => obj.shortenedLink !== data.link)) {
+			//render urlContainer
+			renderUrlContainer(data.link, visibleOriginalLink);
 
-		//render urlContainer
-		renderUrlContainer(data.link, visibleOriginalLink);
+			//create data object
+			let obj = createObject(data);
 
-		//create data object
-		let obj = createObject(data);
-		//console.log(obj);
-		//add to array
-		shortenedUrlsArray.push(obj);
-		setLocalStorage(shortenedUrlsArray);
+			//add to array
+			shortenedUrlsArray.push(obj);
+			setLocalStorage(shortenedUrlsArray);
+		}
 		//console.log(shortenedUrlsArray);
 	} catch (err) {
 		console.error(err);
@@ -150,6 +192,32 @@ getLocalStorage(data);
 // COPY SHORTENED URL
 document.addEventListener("click", function (e) {
 	if (e.target.classList.contains("copy")) copyText();
+});
+
+//CLEAR LOCAL STORAGE
+clearBtn.addEventListener("click", clearData);
+
+//CLOSE SHORTENED URL CONTAINER
+shortenedUrlsContainer.addEventListener("click", function (e) {
+	e.preventDefault();
+
+	if (e.target.classList.value.includes("close-shortened-url")) {
+		let id = e.target.parentNode.dataset.id;
+		//delete url container
+		e.target.parentNode.remove();
+		//delete url from array
+		shortenedUrlsArray.forEach((obj, i) => {
+			if (obj.id === id) {
+				shortenedUrlsArray.splice(i, 1);
+				// update local storage
+				setLocalStorage(shortenedUrlsArray);
+			}
+		});
+	}
+
+	//remove clear button when there are no url list elements
+	clearBtn.classList.add("hidden");
+	statisticsTitle.style.paddingTop = "15rem";
 });
 
 //HAMBURGER MENU
