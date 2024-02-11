@@ -21,7 +21,6 @@ let originalLink;
 let data;
 let localData;
 let shortenedUrlContainer;
-//let closeUrlContainer;
 
 // HELPER FUNCTIONS
 const displayError = function () {
@@ -89,11 +88,8 @@ const getLocalStorage = () => {
 	if (!localData) return;
 
 	shortenedUrlsArray = localData;
-	//console.log(shortenedUrlsArray);
 	shortenedUrlsArray.forEach((url) => {
-		//console.log(url);
 		renderUrlContainer(url.shortenedLink, url.visibleOriginalLink);
-		//console.log(url.shortenedLink, url.visibleOriginalLink);
 	});
 };
 
@@ -173,7 +169,6 @@ const formSubmit = async (e) => {
 			shortenedUrlsArray.push(obj);
 			setLocalStorage(shortenedUrlsArray);
 		}
-		//console.log(shortenedUrlsArray);
 	} catch (err) {
 		console.error(err);
 	}
@@ -183,10 +178,6 @@ const formSubmit = async (e) => {
 
 form.addEventListener("submit", formSubmit);
 
-//set local storage
-//setLocalStorage(shortenedUrlsArray);
-
-//call get local storage
 getLocalStorage(data);
 
 // COPY SHORTENED URL
