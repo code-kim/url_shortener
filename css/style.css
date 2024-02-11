@@ -6,8 +6,6 @@
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-	/* width: 100%; */
-	/* overflow-x: hidden; */
 }
 
 html {
@@ -15,8 +13,6 @@ html {
 }
 
 body {
-	/* width: 100%;
-	overflow-x: hidden; */
 	font-family: "Poppins", sans-serif;
 	font-size: 1.8vw;
 	color: hsl(257, 7%, 63%);
@@ -72,7 +68,6 @@ ul {
 	font-weight: 700;
 
 	display: flex;
-	/* gap: 35vw; */
 	align-items: center;
 }
 
@@ -84,7 +79,6 @@ ul {
 }
 
 .nav-links {
-	/* width: 100%; */
 	list-style: none;
 	display: flex;
 	gap: 3rem;
@@ -93,10 +87,6 @@ ul {
 .nav-links li:hover {
 	color: hsl(260, 8%, 14%);
 }
-
-/* .nav-btns {
-	width: 30rem;
-} */
 
 .login-btn {
 	background-color: #fff;
@@ -128,25 +118,15 @@ ul {
 	display: none;
 }
 
-/* .hamburger-menu {
-	width: 50vw;
-	height: 50vw;
-	background-color: hsl(257, 27%, 26%);
-	border-radius: 10px;
-} */
-
 /* HERO SECTION */
 
 .hero-section {
-	/* width: 100%; */
 	position: relative;
-
 	padding-bottom: 15rem;
 }
 
 .hero-container {
 	display: grid;
-	/* column-gap: 5rem; */
 	grid-template-columns: 0.9fr 1fr;
 	grid-column-gap: 0rem;
 }
@@ -163,9 +143,6 @@ ul {
 
 .hero-description {
 	margin-left: 10vw;
-	/* width: 100%;
-	overflow-x: hidden; */
-	/* font-size: 2.2rem; */
 	font-size: 1.6vw;
 	padding-bottom: 5rem;
 }
@@ -192,14 +169,6 @@ ul {
 .btn-container {
 	margin-bottom: 6rem;
 }
-/* .woman-working-img {
-	
-	
-	position: absolute;
-
-	right: -10rem;
-	bottom: -11rem;
-} */
 
 /* URL SHORTENER */
 .url-shortener-container {
@@ -221,7 +190,6 @@ ul {
 	transform: translateY(-50%);
 
 	display: flex;
-	/* justify-content: space-between; */
 	gap: 2.2rem;
 }
 
@@ -230,8 +198,6 @@ ul {
 	padding: 2.2rem 3.4rem;
 	font-size: 2rem;
 	border-radius: 12px;
-	/* margin-right: 2rem; */
-	/* color: inherit; */
 }
 
 ::placeholder {
@@ -254,7 +220,6 @@ ul {
 .url-shorten-btn {
 	width: 24rem;
 	font-size: 2rem;
-	/* padding: 1.2rem 2.4rem; */
 	border-radius: 12px;
 }
 
@@ -271,8 +236,7 @@ ul {
 .shortened-urls-container {
 	margin-top: 2.2rem;
 	width: 100%;
-
-	/* margin-top: 10rem; */
+	
 	display: flex;
 	flex-direction: column;
 	gap: 2rem;
@@ -282,6 +246,7 @@ ul {
 	color: hsl(260, 8%, 14%);
 	background-color: #fff;
 	padding: 1rem 2rem;
+	
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -294,7 +259,6 @@ ul {
 }
 
 .shortened-link {
-	/* margin-right: 2rem; */
 	color: hsl(180, 66%, 49%);
 }
 
@@ -338,7 +302,6 @@ ul {
 }
 
 .statistics-container {
-	/* width: 79%; */
 	margin: 10rem 0rem 12rem;
 	display: flex;
 	justify-content: space-around;
@@ -349,7 +312,6 @@ ul {
 
 .statistics-card {
 	max-width: 30vw;
-	/* height: 26rem; */
 	background-color: #fff;
 	padding: 0 3rem 3rem;
 	z-index: 999;
